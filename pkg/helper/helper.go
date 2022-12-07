@@ -25,7 +25,6 @@ type Service struct {
 
 	sentMs     uint64
 	serverSeed uint64
-	clientSeed uint64
 	incoming   *net.KCP
 	outgoing   *net.KCP
 }

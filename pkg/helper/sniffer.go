@@ -217,7 +217,8 @@ func (s *Service) handlePayload(p []byte, flag bool, t time.Time) {
 	conv := binary.LittleEndian.Uint64(p)
 	var kcp *net.KCP
 	if flag {
-		if s.incoming == nil {
+		if !s.incoming.CheckConv(conv) {
+			log.Info().Uint64("conv", conv).Msg("New incoming kcp session")
 			s.incoming = net.NewKCP(conv, func(buf []byte, size int) {})
 			s.incoming.SetMtu(1200)
 			s.incoming.NoDelay(1, 20, 2, 1)
@@ -225,7 +226,8 @@ func (s *Service) handlePayload(p []byte, flag bool, t time.Time) {
 		}
 		kcp = s.incoming
 	} else {
-		if s.outgoing == nil {
+		if !s.outgoing.CheckConv(conv) {
+			log.Info().Uint64("conv", conv).Msg("New outgoing kcp session")
 			s.outgoing = net.NewKCP(conv, func(buf []byte, size int) {})
 			s.outgoing.SetMtu(1200)
 			s.outgoing.NoDelay(1, 20, 2, 1)

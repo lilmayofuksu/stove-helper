@@ -38,7 +38,7 @@ func (s *Service) handlePacket(packet *Packet) {
 	p := packet.data
 	l := len(p)
 	if p[0] != 0x45 || p[1] != 0x67 || p[l-2] != 0x89 || p[l-1] != 0xAB {
-		log.Warn().Uint16("magic", binary.BigEndian.Uint16(p)).Msg("Invalid packet, maybe not encrypted")
+		log.Warn().Uint16("magic", binary.BigEndian.Uint16(p)).Int64("ts", packet.time.UnixMilli()).Msg("Invalid packet, maybe not encrypted")
 		return
 	}
 	cmdId := binary.BigEndian.Uint16(p[2:])

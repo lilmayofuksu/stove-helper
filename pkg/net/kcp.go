@@ -218,6 +218,13 @@ func NewKCP(conv uint64, output output_callback) *KCP {
 	return kcp
 }
 
+func (kcp *KCP) CheckConv(conv uint64) bool {
+	if kcp == nil {
+		return false
+	}
+	return kcp.conv == conv
+}
+
 // newSegment creates a KCP segment
 func (kcp *KCP) newSegment(size int) (seg segment) {
 	seg.data = xmitBuf.Get().([]byte)[:size]

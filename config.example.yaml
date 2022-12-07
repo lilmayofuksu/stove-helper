@@ -6,4 +6,4 @@ dataConfig:
   dispatchRegion: # fill in your dispatchRegion
   privateKeyPath: data/private_key_5.pem
 device: # fill in your network interface name
-seed: # fill in your seed, if you want to continue from a previous session
+seed: # fill in your rng seed, if you want to continue from a previous session
