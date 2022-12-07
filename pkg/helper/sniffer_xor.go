@@ -42,17 +42,17 @@ func (s *Service) xor(p []byte) {
 }
 
 func bruteforce(ms, seed uint64, p []byte) (uint64, []byte) {
-	r := csharp.NewRand()
+	r1 := csharp.NewRand()
+	r2 := mt19937.NewRand()
 	v := binary.BigEndian.Uint64(p)
-	for i := uint64(0); i < 100; i++ {
-		r.Seed(int64(ms + i))
+	for i := uint64(0); i < 1000; i++ {
+		r1.Seed(int64(ms + i))
 		for j := uint64(0); j < 1000; j++ {
-			s := r.Uint64()
-			r := mt19937.NewRand()
-			r.Seed(int64(s ^ seed))
-			r.Seed(int64(r.Uint64()))
-			r.Uint64()
-			if (v^r.Uint64())&0xFFFF0000FF00FFFF == 0x4567000000000000 {
+			s := r1.Uint64()
+			r2.Seed(int64(s ^ seed))
+			r2.Seed(int64(r2.Uint64()))
+			r2.Uint64()
+			if (v^r2.Uint64())&0xFFFF0000FF00FFFF == 0x4567000000000000 {
 				log.Info().Uint64("#seed", ms+i).Uint64("depth", j).Msg("Found seed")
 				return ms + i, mt19937.NewKeyBlock(s ^ seed).Key()
 			}
@@ -60,14 +60,13 @@ func bruteforce(ms, seed uint64, p []byte) (uint64, []byte) {
 				break
 			}
 		}
-		r.Seed(int64(ms - i - 1))
+		r1.Seed(int64(ms - i - 1))
 		for j := uint64(0); j < 1000; j++ {
-			s := r.Uint64()
-			r := mt19937.NewRand()
-			r.Seed(int64(s ^ seed))
-			r.Seed(int64(r.Uint64()))
-			r.Uint64()
-			if (v^r.Uint64())&0xFFFF0000FF00FFFF == 0x4567000000000000 {
+			s := r1.Uint64()
+			r2.Seed(int64(s ^ seed))
+			r2.Seed(int64(r2.Uint64()))
+			r2.Uint64()
+			if (v^r2.Uint64())&0xFFFF0000FF00FFFF == 0x4567000000000000 {
 				log.Info().Uint64("#seed", ms-i-1).Uint64("depth", j).Msg("Found seed")
 				return ms - i - 1, mt19937.NewKeyBlock(s ^ seed).Key()
 			}
