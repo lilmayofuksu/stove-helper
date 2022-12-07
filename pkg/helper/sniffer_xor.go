@@ -41,30 +41,38 @@ func (s *Service) xor(p []byte) {
 	}
 }
 
-func bruteforce(ms uint64, seed uint64, p []byte) (uint64, []byte) {
+func bruteforce(ms, seed uint64, p []byte) (uint64, []byte) {
 	r := csharp.NewRand()
-	v := make([]byte, 2)
-	for i := uint64(0); i < 1000; i++ {
+	v := binary.BigEndian.Uint64(p)
+	for i := uint64(0); i < 100; i++ {
 		r.Seed(int64(ms + i))
-		for j := uint64(0); j < 100; j++ {
+		for j := uint64(0); j < 1000; j++ {
 			s := r.Uint64()
-			k := mt19937.NewKeyBlock(s ^ seed)
-			copy(v, p)
-			k.Xor(v)
-			if v[0] == 0x45 && v[1] == 0x67 {
+			r := mt19937.NewRand()
+			r.Seed(int64(s ^ seed))
+			r.Seed(int64(r.Uint64()))
+			r.Uint64()
+			if (v^r.Uint64())&0xFFFF0000FF00FFFF == 0x4567000000000000 {
 				log.Info().Uint64("#seed", ms+i).Uint64("depth", j).Msg("Found seed")
-				return ms + i, k.Key()
+				return ms + i, mt19937.NewKeyBlock(s ^ seed).Key()
+			}
+			if i != 0 && (i > 100 || i+j > 100) {
+				break
 			}
 		}
-		r.Seed(int64(ms - i))
-		for j := uint64(0); j < 100; j++ {
+		r.Seed(int64(ms - i - 1))
+		for j := uint64(0); j < 1000; j++ {
 			s := r.Uint64()
-			k := mt19937.NewKeyBlock(s ^ seed)
-			copy(v, p)
-			k.Xor(v)
-			if v[0] == 0x45 && v[1] == 0x67 {
-				log.Info().Uint64("#seed", ms-i).Uint64("depth", j).Msg("Found seed")
-				return ms - i, k.Key()
+			r := mt19937.NewRand()
+			r.Seed(int64(s ^ seed))
+			r.Seed(int64(r.Uint64()))
+			r.Uint64()
+			if (v^r.Uint64())&0xFFFF0000FF00FFFF == 0x4567000000000000 {
+				log.Info().Uint64("#seed", ms-i-1).Uint64("depth", j).Msg("Found seed")
+				return ms - i - 1, mt19937.NewKeyBlock(s ^ seed).Key()
+			}
+			if i+1 > 100 || i+j+1 > 100 {
+				break
 			}
 		}
 	}
