@@ -44,16 +44,27 @@ func (s *Service) xor(p []byte) {
 func bruteforce(ms uint64, seed uint64, p []byte) (uint64, []byte) {
 	r := csharp.NewRand()
 	v := make([]byte, 2)
-	for i := ms; i > ms-1000; i-- {
-		r.Seed(int64(i))
-		for j := uint64(0); j < 1000; j++ {
+	for i := uint64(0); i < 1000; i++ {
+		r.Seed(int64(ms + i))
+		for j := uint64(0); j < 100; j++ {
 			s := r.Uint64()
 			k := mt19937.NewKeyBlock(s ^ seed)
 			copy(v, p)
 			k.Xor(v)
 			if v[0] == 0x45 && v[1] == 0x67 {
-				log.Info().Uint64("#seed", i).Uint64("depth", j).Msg("Found seed")
-				return i, k.Key()
+				log.Info().Uint64("#seed", ms+i).Uint64("depth", j).Msg("Found seed")
+				return ms + i, k.Key()
+			}
+		}
+		r.Seed(int64(ms - i))
+		for j := uint64(0); j < 100; j++ {
+			s := r.Uint64()
+			k := mt19937.NewKeyBlock(s ^ seed)
+			copy(v, p)
+			k.Xor(v)
+			if v[0] == 0x45 && v[1] == 0x67 {
+				log.Info().Uint64("#seed", ms-i).Uint64("depth", j).Msg("Found seed")
+				return ms - i, k.Key()
 			}
 		}
 	}
