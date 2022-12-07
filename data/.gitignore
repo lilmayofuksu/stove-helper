@@ -1,3 +1,4 @@
 /*
 !/output
 !.gitignore
+!private_key_*.pem

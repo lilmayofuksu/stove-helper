@@ -3,7 +3,7 @@ dataConfig:
   cmdIdPath: data/Sorapointa-Protos/cmdid.csv
   protoPath: data/Sorapointa-Protos/proto
   outputPath: data/output
-  dispatchRegion: #
-  privateKeyPath: data/private_key.pem
-device: #
-seed: 0
+  dispatchRegion: # fill in your dispatchRegion
+  privateKeyPath: data/private_key_5.pem
+device: # fill in your network interface name
+seed: # fill in your seed, if you want to continue from a previous session
