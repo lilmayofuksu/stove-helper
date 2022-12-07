@@ -1,3 +1,14 @@
+/.idea
+/.vscode
+/bin
+/build
+/log
+/temp
+/work
+*.bak
+*.yaml
+!*.example.yaml
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

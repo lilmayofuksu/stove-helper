@@ -1,0 +1,9 @@
+loggingDir: log
+dataConfig:
+  cmdIdPath: data/Sorapointa-Protos/cmdid.csv
+  protoPath: data/Sorapointa-Protos/proto
+  outputPath: data/output
+  dispatchRegion: #
+  privateKeyPath: data/private_key.pem
+device: #
+seed: 0
